@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>树控件</title>
+    <link href="css.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+    <div class="f-tree" id="f-tree"></div>
+    <div id="t-tree" class="f-tree""></div>
+
+    <!--<button id=" btn">刷新</button>-->
+        <script src="jquery.min.js"></script>
+        //
+        <script src="treeView.js"></script>
+        <script src="data.js"></script>
+        <script type="text/javascript">
+
+            $(function () {
+                // if (sessionStorage.getItem("history-html")) {
+
+                //     $('.f-tree').append(sessionStorage.getItem("history-html"));
+                //     // $('.f-treeList-old').click(function () {
+                //     //     var old = $(this);
+                //     //     var iconDiv = old.children('span').eq(0);
+                //     //     var flagClass = iconDiv.attr('class');
+                //     //     var listWrapper = old.parents('.f-treeList-top').eq(0).siblings('.f-treeListWrapper').eq(0);
+                //     //     var t = $('.f-tree');
+                //     //     old.addClass('f-on');
+                //     //     if (flagClass == 'f-iconJia') {
+                //     //         treeView.show([listWrapper]);
+                //     //         iconDiv.removeClass(flagClass);
+                //     //         iconDiv.addClass('f-iconJian');
+                //     //     };
+                //     //     if (flagClass == 'f-iconJian') {
+                //     //         treeView.hide([listWrapper]);
+                //     //         iconDiv.removeClass(flagClass);
+                //     //         iconDiv.addClass('f-iconJia');
+                //     //     };
+                //     // })
+
+                // } else
+                //  {
+                //     treeView.buildTree({
+                //         type: 0,//1有选择框，没有则不传type或传0
+                //         wrapper: '.f-tree',//容器
+                //         data: treeData,//数据
+                //         check: [1, 2]//选中的数据，可以不传
+                //     });
+                // }
+                // $('.f-link').click(function () {
+                //     var html = $('.f-tree').clone(true);//.htmsl();
+                //     // sessionStorage.setItem("history-html", html);
+                //     console.log(html);
+
+                //     $('.t-tree').append(html);
+                //     var clonehtml=$('<div>').append(html).html(); 
+                //     sessionStorage.setItem("history-html", clonehtml);
+                //     $(this).html("");
+                // })
+
+                {
+
+                    // var i = 0;
+
+                    // function callback() {
+                    //     i++;
+                    //     document.writeln(i);
+
+                    //     if (i == 1000000000) {
+                    //         return; //循环到很多次才返回.ie下一般3000多层就堆栈溢出了, google浏览器相对要大一点一般9500以上..
+                    //     } else {
+                    //         callback();  //递归调用
+                    //     }
+                    // }
+
+                    // callback(i);
+                }
+                function test3() {
+                    var i = 0;
+
+                    function callback(p1, p2, p3, p4) {
+                        i++;
+                        document.writeln(p1);
+
+                        if (i == 100000) {
+                            return; //循环到很多次才返回.ie下一般3000多层就堆栈溢出了, google浏览器相对要大一点一般9500以上..
+                        } else {
+                            addTask(callback, 0, "参数" + i, "参数2", "参数3", "参数4");  //递归调用变成了非递归调用
+                        }
+                    }
+
+                    /**
+                    *添加一个任务，
+                    * 	 @param {Function} fun 任务函数名
+                    *	 @param {number} delay 定时时间
+                    *	 @param {object} params 传递到fun中的参数
+                    */
+                    function addTask(fun, delay) {
+                        if (typeof fun == 'function') {
+                            var argu = Array.prototype.slice.call(arguments, 2);
+                            var f = (function () {
+                                fun.apply(null, argu);
+                            });
+                            return window.setTimeout(f, delay);
+                        }
+                        return window.setTimeout(fun, delay);
+                    }
+
+                    callback(i);
+
+                }
+
+                // test1();
+                test2();
+                function test1() {
+                    let self = [];//子集
+                    let next = [];
+                    let data = treeData;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].pid == 0) {
+                            $('body').append(`结点：${data[i].title}<br/>`);
+                            self.push(data[i]);
+                        } else {
+                            next.push(data[i]);
+                        }
+
+                    }
+                    for (let i = 0; i < self.length; i++) {
+                        test1Sub(next, self[i])
+                    }
+
+
+                }
+                function test1Sub(data, parent) {
+                    let self = [];//子集
+                    let next = [];
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].pid == parent.id) {
+                            $('body').append(`结点：${data[i].title},父节点名称：${parent.title}<br/>`);
+                            self.push(data[i]);
+                        } else {
+                            next.push(data[i]);
+                        }
+                    }
+                    if (self.length > 0) {
+                        //遍历所有的子集
+                        for (let i = 0; i < self.length; i++) {
+                            test1Sub(next, self[i])
+                        }
+                    }
+                }
+
+                function test2() {
+                    let self = [];//子集
+                    let next = [];
+                    let data = treeData;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].pid == 0) {
+                            // $('body').append(`结点：${data[i].title}<br/>`);
+                            parsehtml(data[i], { title: "无" });
+                            self.push(data[i]);
+                        } else {
+                            next.push(data[i]);
+                        }
+
+                    }
+                    for (let i = 0; i < self.length; i++) {
+                        test2Sub(next, self[i])
+                    }
+
+
+                }
+                function test2Sub(data, parent) {
+                    let self = [];//子集
+                    let next = [];
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].pid == parent.id) {
+                            //$('body').append(`结点：${data[i].title},父节点名称：${parent.title}<br/>`);
+                            parsehtml(data[i], parent);
+                            self.push(data[i]);
+                        } else {
+                            next.push(data[i]);
+                        }
+                    }
+                    if (self.length > 0) {
+                        //遍历所有的子集
+                        for (let i = 0; i < self.length; i++) {
+                            //test2Sub(next, self[i])
+                            addTask(test2Sub, 0, next, self[i]);
+                        }
+                    }
+                }
+                function parsehtml(obj, parent) {
+                    var html = $(`<div tt='${obj.title}'>结点：${obj.title},父节点名称：${parent.title}<br/></div>`)
+                    $('body').append(html);
+                    html.click(function () {
+                        alert('你点我了' + $(this).attr('tt'));
+                    })
+                }
+
+                /**
+                   *添加一个任务，
+                   * 	 @param {Function} fun 任务函数名
+                   *	 @param {number} delay 定时时间
+                   *	 @param {object} params 传递到fun中的参数
+                   */
+                function addTask(fun, delay) {
+                    if (typeof fun == 'function') {
+                        var argu = Array.prototype.slice.call(arguments, 2);
+                        var f = (function () {
+                            fun.apply(null, argu);
+                        });
+                        return window.setTimeout(f, delay);
+                    }
+                    return window.setTimeout(fun, delay);
+                }
+
+
+            })
+        </script>
+
+</body>
+
+</html>
