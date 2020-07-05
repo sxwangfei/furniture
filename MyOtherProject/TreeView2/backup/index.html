@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>树控件</title>
+    <link href="css.css" rel="stylesheet" />
+
+</head>
+<body>
+
+    <div class="f-tree" id="f-tree"></div>
+
+    <!--<button id="btn">刷新</button>-->
+    <script src="jquery.min.js"></script>
+    <script src="treeView.js"></script>
+    <script src="data.js"></script>
+    <script type="text/javascript">
+       
+        $(function () {
+            if (sessionStorage.getItem("history-html")) {
+                $('.f-tree').html(sessionStorage.getItem("history-html"));
+                $('.f-treeList-old').click(function () {
+                    var old = $(this);
+                    var iconDiv = old.children('span').eq(0);
+                    var flagClass = iconDiv.attr('class');
+                    var listWrapper = old.parents('.f-treeList-top').eq(0).siblings('.f-treeListWrapper').eq(0);
+                    var t = $('.f-tree');
+                    old.addClass('f-on');
+                    if (flagClass == 'f-iconJia') {
+                        treeView.show([listWrapper]);
+                        iconDiv.removeClass(flagClass);
+                        iconDiv.addClass('f-iconJian');
+                    };
+                    if (flagClass == 'f-iconJian') {
+                        treeView.hide([listWrapper]);
+                        iconDiv.removeClass(flagClass);
+                        iconDiv.addClass('f-iconJia');
+                    };
+                })
+
+            } else {
+                treeView.buildTree({
+                    type: 0,//1有选择框，没有则不传type或传0
+                    wrapper: '.f-tree',//容器
+                    data: treeData,//数据
+                    check: [1, 2]//选中的数据，可以不传
+                });
+            }
+            $('.f-link').click(function () {
+                var html = $('.f-tree').html();
+                sessionStorage.setItem("history-html", html);
+            })
+        })
+    </script>
+
+</body>
+</html>
